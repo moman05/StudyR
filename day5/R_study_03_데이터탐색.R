@@ -130,3 +130,9 @@ plot(pressure$temperature,
      xlab = '온도(섭씨)',
      ylab = '기압',
      )
+
+
+
+
+
+
