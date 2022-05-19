@@ -66,7 +66,7 @@ table(CES11$abortion)/nrow(CES11)
 agg <- aggregate(CES11[,'abortion'], by=list(성별=CES11$gender),
                  FUN=table)
 str(agg)
-agg.2 <- agg[,1]
+agg.2 <- agg[,2]
 
 colnames(agg[,2]) <- c('낙태찬성','낙태반대')
 
