@@ -140,30 +140,42 @@ avg.nosmoker <- mean(tips[idx, 'tip'])
 avg.nosmoker
 
 # 함수작성해서 코드중복을 줄인다
-meanbycol.tip <- function(tips, colname){
-  value <- unique(tips[, colname])  #값의 종류를 구함
-  result <- list()
-  for(i in 1:length(value)) {    #값의 종류별로 평균을 구함
-    idx <- which(tips[,colname] == value[i])
-    result[i] <- mean(tips[idx,'tip'])
+# myFunc_tip.R
+
+source('myFunc_tip.R')
+meanbycol.tip('sex')
+meanbycol.tip('smoker')
+
+# 결제금액대비 받은팁
+categorize.tip <- function(tips) {
+  tip_ratio <- tips$tip/tips$total_bill * 100
+  
+  class <- c()
+  
+  for(i in 1:nrow(tips)){
+    if(tip_ratio[i] < 10){
+      class[i] <- 1
+    } else if(tip_ratio[i] < 15){
+      class[i] <- 2
+    } else if(tip_ratio[i] < 20){
+      class[i] <- 3
+    } else {
+      class[i] <- 4
+    }
   }
-  names(result) <- value
-  return(result)
+  tips.new <- cbind(tips, type = class, ratio=tip_ratio)
+  return(tips.new)
 }
+source('myFunc_tip.R')
+tips.new <- categorize.tip(tips)
+head(tips.new)
 
-source('myfun')
-##아직다못함
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+res <- c()
+for(i in 1:4){
+  idx <- which(tips.new[,'type'] == i)
+  tips.tmp <- tips.new[idx, ]
+  res.tmp <- apply(tips.tmp[c('type', 'total_bill', 'tip', 'ratio')], 2, mean)
+  res <- rbind(res, res.tmp)
+}
+rownames(res) <- 1:4
+res
